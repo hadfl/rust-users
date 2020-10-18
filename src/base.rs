@@ -140,6 +140,7 @@ impl User {
     ///     println!("User is in group: {:?}", group.name());
     /// }
     /// ```
+    #[cfg(not(target_os = "illumos"))]
     pub fn groups(&self) -> Option<Vec<Group>> {
         get_user_groups(self.name(), self.primary_group_id())
     }
@@ -725,6 +726,7 @@ pub fn group_access_list() -> io::Result<Vec<Group>> {
 ///     println!("User is a member of group #{} ({:?})", group.gid(), group.name());
 /// }
 /// ```
+#[cfg(not(target_os = "illumos"))]
 pub fn get_user_groups<S: AsRef<OsStr> + ?Sized>(username: &S, gid: gid_t) -> Option<Vec<Group>> {
     // MacOS uses i32 instead of gid_t in getgrouplist for unknown reasons
     #[cfg(all(unix, target_os="macos"))]

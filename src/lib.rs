@@ -135,6 +135,7 @@ pub use base::{get_current_uid, get_current_username};
 pub use base::{get_effective_uid, get_effective_username};
 pub use base::{get_current_gid, get_current_groupname};
 pub use base::{get_effective_gid, get_effective_groupname};
+#[cfg(not(target_os = "illumos"))]
 pub use base::{get_user_groups, group_access_list};
 pub use base::{all_users};
 
