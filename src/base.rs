@@ -135,6 +135,7 @@ impl User {
     ///     println!("User is in group: {:?}", group.name());
     /// }
     /// ```
+    #[cfg(not(any(target_os = "illumos", target_os = "solaris")))]
     pub fn groups(&self) -> Option<Vec<Group>> {
         get_user_groups(self.name(), self.primary_group_id())
     }
@@ -686,6 +687,7 @@ pub fn group_access_list() -> IoResult<Vec<Group>> {
 ///     println!("User is a member of group #{} ({:?})", group.gid(), group.name());
 /// }
 /// ```
+#[cfg(not(any(target_os = "illumos", target_os = "solaris")))]
 pub fn get_user_groups<S: AsRef<OsStr> + ?Sized>(username: &S, gid: gid_t) -> Option<Vec<Group>> {
     // MacOS uses i32 instead of gid_t in getgrouplist for unknown reasons
     #[cfg(all(unix, target_os="macos"))]
@@ -811,7 +813,7 @@ pub mod os {
     /// Although the `passwd` struct is common among Unix systems, its actual
     /// format can vary. See the definitions in the `base` module to check which
     /// fields are actually present.
-    #[cfg(any(target_os = "linux", target_os = "android", target_os = "macos", target_os = "freebsd", target_os = "dragonfly", target_os = "openbsd", target_os = "netbsd", target_os = "solaris"))]
+    #[cfg(any(target_os = "linux", target_os = "android", target_os = "macos", target_os = "freebsd", target_os = "dragonfly", target_os = "openbsd", target_os = "netbsd", target_os = "solaris", target_os = "illumos"))]
     pub mod unix {
         use std::ffi::{OsStr, OsString};
         use std::path::{Path, PathBuf};
@@ -900,10 +902,10 @@ pub mod os {
             }
         }
 
-        #[cfg(any(target_os = "linux", target_os = "android", target_os = "solaris"))]
+        #[cfg(any(target_os = "linux", target_os = "android", target_os = "solaris", target_os = "illumos"))]
         use super::super::User;
 
-        #[cfg(any(target_os = "linux", target_os = "android", target_os = "solaris"))]
+        #[cfg(any(target_os = "linux", target_os = "android", target_os = "solaris", target_os = "illumos"))]
         impl UserExt for User {
             fn home_dir(&self) -> &Path {
                 Path::new(&self.extras.home_dir)
@@ -1064,11 +1066,11 @@ pub mod os {
     pub type UserExtras = bsd::UserExtras;
 
     /// Any extra fields on a `User` specific to the current platform.
-    #[cfg(any(target_os = "linux", target_os = "android", target_os = "solaris"))]
+    #[cfg(any(target_os = "linux", target_os = "android", target_os = "solaris", target_os = "illumos"))]
     pub type UserExtras = unix::UserExtras;
 
     /// Any extra fields on a `Group` specific to the current platform.
-    #[cfg(any(target_os = "linux", target_os = "android", target_os = "macos", target_os = "freebsd", target_os = "dragonfly", target_os = "openbsd", target_os = "netbsd", target_os = "solaris"))]
+    #[cfg(any(target_os = "linux", target_os = "android", target_os = "macos", target_os = "freebsd", target_os = "dragonfly", target_os = "openbsd", target_os = "netbsd", target_os = "solaris", target_os = "illumos"))]
     pub type GroupExtras = unix::GroupExtras;
 }
 
